@@ -11,6 +11,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="CTC" target="1.8" />
+      <module name="CTC23" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

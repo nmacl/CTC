@@ -11,20 +11,27 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.macl.ctc.events.world;
+import org.macl.ctc.events.Blocks;
+import org.macl.ctc.game.GameManager;
+import org.macl.ctc.game.WorldManager;
 
 public final class Main extends JavaPlugin implements CommandExecutor {
 
-    public boolean isUnloading = false;
 
     public String map = "map";
+
+    public GameManager game;
+    public WorldManager worldManager;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         this.getCommand("ctc").setExecutor(this);
         getLogger().info("Started!");
-        getServer().getPluginManager().registerEvents(new world(this), this);
+        getServer().getPluginManager().registerEvents(new Blocks(this), this);
+        // Setup map / game
+        game = new GameManager(this);
+        worldManager = new WorldManager(this);
     }
 
     @Override
@@ -40,15 +47,7 @@ public final class Main extends JavaPlugin implements CommandExecutor {
                 return false;
 
             if(args[0].equalsIgnoreCase("reset")) {
-
-                isUnloading = true;
-                clearAll();
-                boolean unloaded = getServer().unloadWorld(Bukkit.getWorld(map), false);
-                Bukkit.broadcast(Component.text("unload success " + unloaded));
-
-                getServer().createWorld(new WorldCreator(map));
-                Bukkit.broadcast(Component.text("load success"));
-                isUnloading = false;
+                worldManager.clean();
             } else if(args[0].equalsIgnoreCase("teleport")) {
                 World w = Bukkit.getWorld(args[1]);
                 p.teleport(w.getSpawnLocation());
@@ -62,18 +61,5 @@ public final class Main extends JavaPlugin implements CommandExecutor {
 
         // If the player (or console) uses our command correct, we can return true
         return true;
-    }
-
-    public void clearAll() {
-        World w =  getServer().getWorld("world");
-        for(Player p : Bukkit.getOnlinePlayers())
-            p.kick();
-        for(Chunk c : w.getLoadedChunks()) {
-            c.load();
-            for(Entity e : c.getEntities()) {
-                e.remove();
-            }
-            c.unload(true);
-        }
     }
 }

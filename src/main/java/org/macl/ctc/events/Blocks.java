@@ -3,16 +3,15 @@ package org.macl.ctc.events;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.macl.ctc.Main;
 
 
-public class world extends eventManager {
+public class Blocks extends DefaultListener {
 
-    public world(Main main) {
+    public Blocks(Main main) {
         super(main);
     }
 
@@ -22,21 +21,9 @@ public class world extends eventManager {
     }
 
     @EventHandler
-    public void playerJoin(AsyncPlayerPreLoginEvent event) {
-        if(main.isUnloading)
-            event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-    }
-
-    @EventHandler
     public void worldUnload(WorldUnloadEvent event) {
-        if(event.isCancelled()) {
-            Bukkit.broadcast(Component.text("Cancelled"));
-        }
+        Bukkit.broadcast(Component.text("Broken"));
     }
 
-    @EventHandler
-    public void worldLoad(WorldLoadEvent event) {
-
-    }
 
 }

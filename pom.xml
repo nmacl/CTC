@@ -38,7 +38,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>/Users/nolanmaclear/Desktop/server/plugins</outputDirectory>
+                            <outputDirectory>C:/Users/nmacl/Desktop/SERVER23/plugins</outputDirectory>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
