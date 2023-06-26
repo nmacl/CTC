@@ -1,7 +1,9 @@
 package org.macl.ctc.kits;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -33,9 +35,43 @@ public class Snowballer extends Kit {
         p.launchProjectile(Snowball.class);
     }
 
+    public class rocketTrail extends BukkitRunnable {
+        public float lastFall = 0.1f;
+        double r = 1;
+        double m = 0;
+        double t = 0;
+        public void run() {
+            Location l = p.getLocation();
+
+            if(p.getFallDistance() == 0)
+                for(int i = 0; i < 4; i++) {
+                    m = m + Math.PI/32;
+                    double x = r*Math.cos(m);
+                    double y = r;
+                    double z = r*Math.sin(m);
+                    l.add(x,y,z);
+
+                    p.getWorld().spawnParticle(Particle.CLOUD,l,1);
+
+                    l.subtract(x,y,z);
+                }
+
+            lastFall = p.getFallDistance();
+            t++;
+            Location loc = p.getLocation();
+            loc.add(-0.3, -0.5, 0);
+
+            p.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME,l,1);
+
+            if(t == 20*3)
+                this.cancel();
+        }
+    }
+
     public void launch() {
         if(!cooldowns.get("rocketCool")) {
-            p.setVelocity(p.getLocation().getDirection().                                                                                                                                                                                                                                                                                                                                                                    multiply(2.3f));
+            p.setVelocity(p.getLocation().getDirection().multiply(2.3f));
+            new rocketTrail().runTaskTimer(main, 0L, 1L);
             new cooldownTimer(this, 30, "rocketCool", rocketJump).runTaskTimer(main, 0L, 5L);
         }
     }

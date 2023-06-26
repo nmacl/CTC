@@ -17,8 +17,11 @@ import org.macl.ctc.events.Players;
 import org.macl.ctc.game.GameManager;
 import org.macl.ctc.game.KitManager;
 import org.macl.ctc.game.WorldManager;
+import org.macl.ctc.kits.Kit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 public final class Main extends JavaPlugin implements CommandExecutor {
 
@@ -110,5 +113,9 @@ public final class Main extends JavaPlugin implements CommandExecutor {
         meta.addEnchant(Enchantment.DIG_SPEED, 1, true);
         crusher.setItemMeta(meta);
         return crusher;
+    }
+
+    public HashMap<UUID, Kit> getKits() {
+        return kit.kits;
     }
 }

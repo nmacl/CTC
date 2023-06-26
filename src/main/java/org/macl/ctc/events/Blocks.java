@@ -2,9 +2,11 @@ package org.macl.ctc.events;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.*;
@@ -12,8 +14,10 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.macl.ctc.Main;
+import org.macl.ctc.kits.Spy;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 public class Blocks extends DefaultListener {
@@ -54,8 +58,20 @@ public class Blocks extends DefaultListener {
 
     @EventHandler
     public void blockPlace(BlockPlaceEvent event) {
+        Block b = event.getBlock();
+        Player p = event.getPlayer();
         game.resetCenter();
+        if (b.getType() == Material.RED_CANDLE)
+            if (main.getKits().get(p.getUniqueId()) != null && main.getKits().get(p.getUniqueId()) instanceof Spy) {
+                Spy s = (Spy) main.getKits().get(p.getUniqueId());
+                if (s.getDetonate() != null)
+                    return;
+                s.setDetonate(b.getLocation());
+                s.addDetonate();
+                p.sendMessage(ChatColor.GREEN + "Remote explosive activated! Right click blaze rod to activate");
+            }
     }
+
 
     @EventHandler
     public void blockBurn(BlockBurnEvent event) {

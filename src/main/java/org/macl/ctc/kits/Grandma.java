@@ -2,6 +2,7 @@ package org.macl.ctc.kits;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -36,20 +37,21 @@ public class Grandma extends Kit {
     public void heart() {
         int cookies = p.getInventory().first(Material.COOKIE);
         p.getInventory().getItem(cookies).setAmount(p.getInventory().getItem(cookies).getAmount() - 1);
-        for(Entity e : p.getLocation().getWorld().getNearbyEntities(p.getLocation(), 4, 4, 4))
+        for(Entity e : p.getLocation().getWorld().getNearbyEntities(p.getLocation(), 5, 5, 5))
             if(e instanceof Player) {
                 Player pe = (Player) e;
+                p.getWorld().spawnParticle(Particle.HEART, p.getLocation(), 10);
                 if((main.game.redHas(p) && main.game.redHas(pe)) || (main.game.blueHas(p) && main.game.blueHas(pe)))
                     if(pe == p)
                         if(pe.getHealth() + 4.0 > 20)
                             pe.setHealth(20);
                         else
                             pe.setHealth(p.getHealth() + 4.0);
-                    else
-                    if(pe.getHealth() + 7.0 > 20)
-                        pe.setHealth(20);
-                    else
-                        pe.setHealth(p.getHealth() + 7.0);
+                    else if(pe.getHealth() + 7.0 > 20)
+                            pe.setHealth(20);
+                        else
+                            pe.setHealth(p.getHealth() + 7.0);
+                    p.getWorld().spawnParticle(Particle.HEART, pe.getLocation(), 10);
             }
 
     }

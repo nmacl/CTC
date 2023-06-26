@@ -15,10 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.macl.ctc.Main;
 import org.macl.ctc.events.DefaultListener;
-import org.macl.ctc.kits.Grandma;
-import org.macl.ctc.kits.Kit;
-import org.macl.ctc.kits.KitType;
-import org.macl.ctc.kits.Snowballer;
+import org.macl.ctc.kits.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,6 +104,8 @@ public class KitManager implements Listener {
                 case STICK:
                     kits.put(p.getUniqueId(), new Grandma(main, p, KitType.GRANDMA));
                     break;
+                case IRON_HOE:
+                    kits.put(p.getUniqueId(), new Spy(main, p, KitType.SPY));
                 default:
                     break;
             }

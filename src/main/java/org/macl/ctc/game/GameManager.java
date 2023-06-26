@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.*;
 import org.macl.ctc.Main;
 import org.macl.ctc.kits.Kit;
+import org.macl.ctc.kits.Spy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,11 +49,11 @@ public class GameManager {
         Collections.shuffle(stack);
         for(UUID uuid : stack) {
             Player p = Bukkit.getPlayer(uuid);
-            String name = p.getName();
             if(p == null) {
                 stack.remove(uuid);
                 continue;
             }
+            String name = p.getName();
             int redSize = getRed().getSize();
             int blueSize = getBlue().getSize();
             if(redSize > blueSize)
@@ -62,8 +64,14 @@ public class GameManager {
                 getBlue().addEntry(name);
             setup(p);
         }
+
         main.broadcast("The game has begun! Destroy the other teams core (obsidian) to win!");
         stack.clear();
+        Objective objective = scoreboard().registerNewObjective("sidebar", "dummy", main.prefix);
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        Score onlineName = objective.getScore(centerString(0,0));
+        onlineName.setScore(1);
     }
     private void setup(Player p) {
         teleportSpawn(p);
@@ -176,6 +184,7 @@ public class GameManager {
                         blue++;
 
                 }
+
                 for(Objective obj : scoreboard().getObjectives())
                     obj.unregister();
 
@@ -210,13 +219,15 @@ public class GameManager {
                         for(Player p : getBlues())
                             p.getInventory().remove(Material.DIAMOND_PICKAXE);
                         for(Player p : getReds())
-                            p.getInventory().setItem(8, main.coreCrush());
+                            if(!(main.getKits().get(p.getUniqueId()) != null && main.getKits().get(p.getUniqueId()) instanceof Spy))
+                                p.getInventory().setItem(8, main.coreCrush());
                         break;
                     case(2):
                         for(Player p : getReds())
                             p.getInventory().remove(Material.DIAMOND_PICKAXE);
                         for(Player p : getBlues())
-                            p.getInventory().setItem(8, main.coreCrush());
+                            if(!(main.getKits().get(p.getUniqueId()) != null && main.getKits().get(p.getUniqueId()) instanceof Spy))
+                                p.getInventory().setItem(8, main.coreCrush());
                         break;
 
                 }
@@ -272,7 +283,21 @@ public class GameManager {
     public void clean() {
         for(Team t : scoreboard().getTeams())
             t.unregister();
+
+        for(Objective obj : scoreboard().getObjectives())
+            obj.unregister();
+
         register();
+
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            PlayerInventory e = p.getInventory();
+            e.setArmorContents(null);
+            e.clear();
+            p.setHealth(20);
+            p.setFireTicks(0);
+            for(PotionEffect potions : p.getActivePotionEffects())
+                p.removePotionEffect(potions.getType());
+        }
     }
 
     public void register() {
